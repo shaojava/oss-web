@@ -19,7 +19,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.all('/api', function (req, res, next) {
-        console.log('req',req);
+   
 });
 
 
