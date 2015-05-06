@@ -26,8 +26,10 @@ router.get('/', function (req, res, next) {
 
 router.all('/api', function (req, res, next) {
     oss.listBucket(function (err, data) {
-        console.log(JSON.stringify(data));
-        res.json(data);
+        data = data.toString();
+        console.log(data);
+        res.set('Content-Type', 'application/xml');
+        res.send(data);
     });
 });
 
