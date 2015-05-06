@@ -1,0 +1,3 @@
+[submodule "oss-client-ui"]
+	path = oss-client-ui
+	url = git@github.com:gokuai/oss-client-ui.git
