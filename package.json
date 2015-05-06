@@ -14,6 +14,7 @@
     "http-proxy": "^1.11.1",
     "jade": "~1.9.2",
     "morgan": "~1.5.1",
+    "request": "^2.55.0",
     "serve-favicon": "~2.2.0"
   },
   "devDependencies": {
