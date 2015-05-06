@@ -1,15 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var httpProxy = require('http-proxy');
+var OSSSigner = require('../node_modules/aliyun-sdk/lib/signers/oss.js');
 
-var accessKeyId = "aNgmvBucXXcJnOgj";
-var secretAccessKey = "GBJN7GarVWrITZT9YZR64Ir6bOLEM5";
-
+var credentials = {
+    secretAccessKey:"GBJN7GarVWrITZT9YZR64Ir6bOLEM5",
+    accessKeyId:"aNgmvBucXXcJnOgj"
+};
 var proxy = httpProxy.createProxyServer({});
 
-
 proxy.on('proxyReq', function (proxyReq, req, res, options) {
-    //console.log('req',req);
+    var  signer = new OSSSigner(req);
+    signer.addAuthorization(credentials,  new Date());
+    console.log('res',res.body);
 });
 
 
@@ -31,7 +34,6 @@ router.get('/', function (req, res, next) {
 });
 
 router.all('/api', function (req, res, next) {
-    console.log('req', req.query);
     proxy.web(req, res, {
         target: 'http://' + (req.query['bucket'] ? req.query['bucket'] + "." : "") + (req.query['region'] ? req.query['region'] + '.' : '') + req.query['host']
     });
