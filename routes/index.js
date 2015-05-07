@@ -3,6 +3,7 @@ var router = express.Router();
 //var httpProxy = require('http-proxy');
 var OSSSigner = require('../node_modules/aliyun-sdk/lib/signers/oss.js');
 var request = require('request');
+require('request-debug')(request);
 
 //var tunnel = require('tunnel');
 
@@ -47,8 +48,10 @@ router.get('/', function (req, res, next) {
 
 router.all('/api', function (req, res, next) {
     var target = 'http://' + (req.query['bucket'] ? req.query['bucket'] + "." : "") + (req.query['region'] ? req.query['region'] + '.' : '') + req.query['host'];
-    //console.log('target',target);
-    require('request').debug = true;
+    //var target = 'http://' + "" + (req.query['region'] ? req.query['region'] + '.' : '') + req.query['host'];
+    console.log('target', target);
+    //require('request').debug = true;
+    //req.headers['host'] = target.replace('http://', '');
     if (req.method == 'GET') {
         var requestOSS = request({
             url: target,
@@ -56,15 +59,17 @@ router.all('/api', function (req, res, next) {
             qs: req.query,
             headers: req.headers
         });
+        //delete(req.headers);
         var signer = new OSSSigner(requestOSS);
         signer.addAuthorization(credentials, new Date());
         requestOSS.pipe(res);
-
     } else {
+        console.log('req.body', req.rawBody);
         var requestOSS = request({
             url: target,
             method: req.method,
-            body: req.body,
+            body: req.rawBody,
+            //qs: req.query,
             headers: req.headers
         });
         var signer = new OSSSigner(requestOSS);
