@@ -40,16 +40,13 @@ router.all('/api', function (req, res, next) {
     console.log('req.headers', req.headers);
     //res.send();
     if (req.headers['x-proxy-host']) {
-        var target = 'http://' + req.headers['x-proxy-host'];
         req.headers['host'] = req.headers['x-proxy-host'];
         //require('request').debug = true;
-        console.log('req.path', req);
+        var requestUrl =   'http://' + req.headers['x-proxy-host'] + req.url.replace(/^\/api/,'');
         if (req.method == 'GET') {
-            console.log('url', target + req.url.replace(/^\/api/,''));
             var requestOSS = request({
-                url: target + req.url.replace(/^\/api/,''),
+                url: requestUrl,
                 method: req.method,
-                //qs: req.query,
                 headers: req.headers
             });
 
@@ -60,12 +57,12 @@ router.all('/api', function (req, res, next) {
         } else {
             console.log('req.body', req.rawBody);
             var requestOSS = request({
-                url: target,
+                url: requestUrl,
                 method: req.method,
                 body: req.rawBody,
-                //qs: req.query,
                 headers: req.headers
             });
+            requestOSS.virtualHostedBucket =req.headers['x-proxy-bucket'] ? req.headers['x-proxy-bucket'] : '';
             var signer = new OSSSigner(requestOSS);
             signer.addAuthorization(credentials, new Date());
             console.log('requestOSS', requestOSS.headers['Authorization']);
