@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-//var httpProxy = require('http-proxy');
+
 var OSSSigner = require('../node_modules/aliyun-sdk/lib/signers/oss.js');
 var request = require('request');
 require('request-debug')(request);
@@ -18,20 +18,9 @@ var credentials = {
     secretAccessKey: "GBJN7GarVWrITZT9YZR64Ir6bOLEM5",
     accessKeyId: "aNgmvBucXXcJnOgj"
 };
-//var proxy = httpProxy.createProxyServer({
-//    //agent:tunnelingAgent
-//});
-
-//proxy.on('proxyReq', function (proxyReq, req, res, options) {
-//    var signer = new OSSSigner(req);
-//    signer.addAuthorization(credentials, new Date());
-//    console.log('res', res.body);
-//});
-
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-
     var options = {
         root: '../oss-client-ui/app/'
     };
@@ -52,6 +41,7 @@ router.all('/api', function (req, res, next) {
     console.log('target', target);
     //require('request').debug = true;
     //req.headers['host'] = target.replace('http://', '');
+    require('request').debug = true;
     if (req.method == 'GET') {
         var requestOSS = request({
             url: target,
@@ -77,6 +67,5 @@ router.all('/api', function (req, res, next) {
         requestOSS.pipe(res);
     }
 });
-
 
 module.exports = router;
