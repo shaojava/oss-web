@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var _ = require('underscore');
 
 var OSSSigner = require('../node_modules/aliyun-sdk/lib/signers/oss.js');
 var request = require('request');
+/*
+ Debug时抓包使用
+ */
 require('request-debug')(request);
 
 var credentials = {
