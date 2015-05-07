@@ -52,9 +52,10 @@ router.all('/api', function (req, res, next) {
                 //qs: req.query,
                 headers: req.headers
             });
+
+            requestOSS.virtualHostedBucket =req.headers['x-proxy-bucket'] ? req.headers['x-proxy-bucket'] : '';
             var signer = new OSSSigner(requestOSS);
             signer.addAuthorization(credentials, new Date());
-            console.log('requestOSS', requestOSS.headers['Authorization']);
             requestOSS.pipe(res);
         } else {
             console.log('req.body', req.rawBody);
