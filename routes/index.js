@@ -39,19 +39,17 @@ router.get('/', function (req, res, next) {
 router.all('/api', function (req, res, next) {
     console.log('req.headers', req.headers);
     //res.send();
-    if (req.get['x']) {
-
-        var target = 'http://' + (req.query['bucket'] ? req.query['bucket'] + "." : "") + (req.query['region'] ? req.query['region'] + '.' : '') + req.query['host'];
-        //var target = 'http://' + "" + (req.query['region'] ? req.query['region'] + '.' : '') + req.query['host'];
-        console.log('target', target);
-        console.log('');
-        //req.headers['host'] = target.replace('http://', '');
+    if (req.headers['x-proxy-host']) {
+        var target = 'http://' + req.headers['x-proxy-host'];
+        req.headers['host'] = req.headers['x-proxy-host'];
         //require('request').debug = true;
+        console.log('req.path', req);
         if (req.method == 'GET') {
+            console.log('url', target + req.url.replace(/^\/api/,''));
             var requestOSS = request({
-                url: target,
+                url: target + req.url.replace(/^\/api/,''),
                 method: req.method,
-                qs: req.query,
+                //qs: req.query,
                 headers: req.headers
             });
             var signer = new OSSSigner(requestOSS);
@@ -72,20 +70,19 @@ router.all('/api', function (req, res, next) {
             console.log('requestOSS', requestOSS.headers['Authorization']);
             requestOSS.pipe(res);
         }
-
-        var req2 = _.clone(req);
-        req2.headers['host'] = ;
-        if (req2.method == 'GET') {
-            var requestOSS2 = request({
-                url: target,
-                method: req2.method,
-                qs: req2.query,
-                headers: req2.headers
-            });
-            var signer = new OSSSigner(requestOSS2);
-            signer.addAuthorization(credentials, new Date());
-            console.log('requestOSS2', requestOSS2.headers['Authorization']);
-        }
+        //var req2 = _.clone(req);
+        //req2.headers['host'] = ;
+        //if (req2.method == 'GET') {
+        //    var requestOSS2 = request({
+        //        url: target,
+        //        method: req2.method,
+        //        qs: req2.query,
+        //        headers: req2.headers
+        //    });
+        //    var signer = new OSSSigner(requestOSS2);
+        //    signer.addAuthorization(credentials, new Date());
+        //    console.log('requestOSS2', requestOSS2.headers['Authorization']);
+        //}
     }
 
 });
